@@ -189,6 +189,22 @@ Select a GPU with:
 CUDA_ID=0 bash web_client/run.sh
 ```
 
+## Control-frequency stress testing
+
+Generate one video per scene, oscillation frequency, waveform, key pair, and seed:
+
+```bash
+bash scripts/run_control_sweep.sh
+# Preview the experiment plan without CUDA or checkpoints:
+bash scripts/run_control_sweep.sh --dry-run
+```
+
+The default sweep covers all scene presets, 0.5–10 Hz A/D square-wave inputs,
+and a constant-action baseline. Sampling-limited frequencies and the experimental
+within-block action packing are explicitly labeled. See
+[the experiment guide](docs/control_frequency_sweep.md) for timing assumptions,
+action traces, sine/stop-go signals, interface ablations, and resume options.
+
 ## ❓ FAQ
 
 For common questions regarding hardware, environment setup, and runtime compatibility, please refer to [FAQ.md](FAQ.md).

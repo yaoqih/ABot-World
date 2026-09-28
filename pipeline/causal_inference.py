@@ -315,6 +315,24 @@ class CausalInferencePipeline(torch.nn.Module):
         self.conditional_dict["act_context"] = control_action_latents
         print(f'action_list, {action_list}')
 
+    def set_act_sequence(self, actions, height: int, width: int,
+                         num_frames: int, device: Optional[torch.device] = None):
+        """Experimental pixel-frame actions, preserving all within-block changes.
+
+        Key order is [W,A,S,D,I,J,K,L]. Supply 4*num_frames-3 samples
+        for the first block and 4*num_frames for subsequent blocks. Values in
+        [0,1] are preserved (fractional controls are an OOD experiment).
+        """
+        from utils.action_conditioning import pack_frame_actions
+
+        if self.conditional_dict is None:
+            raise RuntimeError("call set_prompts first")
+        self.conditional_dict["act_context"] = pack_frame_actions(
+            actions, num_latent_frames=num_frames,
+            first_block=self.current_start_frame == 0,
+            height=height, width=width, device=device or self.device,
+        )
+
 
     def reset_stream(self, batch_size: int, dtype, device, initial_latent=None):
         ref_cache_token_len = self._ref_cache_token_len(getattr(self, 'conditional_dict', None))
